@@ -33,7 +33,7 @@ coolApp.config(function ($routeProvider) {
 
 coolApp.service('api', function ($http) {
     // sample http api POST request
-    var sampleHttpApiCall = function (method, jsonData, next) {
+    let sampleHttpApiCall = function (method, jsonData, next) {
         var settings = {
             "async": true,
             "crossDomain": true,
@@ -43,8 +43,8 @@ coolApp.service('api', function ($http) {
                 "content-type": "application/json",
             },
         };
-        if (window.sessionStorage.loggedIn == 1) {
-            settings.headers.username = window.sessionStorage.username;
+        if (window.localStorage.loggedIn == 1) {
+            settings.headers.username = window.localStorage.username;
         }
         if (method != 'GET') {
             settings.data = jsonData
@@ -52,32 +52,32 @@ coolApp.service('api', function ($http) {
         $http(settings).success(function (response) {
             console.log('Http response ', response);
             if (response.ok) {
-                next();
+                next(response);
             } else {
-                console.log("error")
+                console.error("error with http api: " ,repsonse)
             }
         });
     };
 
     this.login = function login(username, next) {
-        window.sessionStorage.username = username;
-        window.sessionStorage.loggedIn = 1;
+        window.localStorage.username = username;
+        window.localStorage.loggedIn = 1;
         sampleHttpApiCall('GET', {}, next);
     }
 
-    this.allTasks = function allTasks() {
+    this.allTasks = function allTasks(next) {
         sampleHttpApiCall('GET', {}, next);
     }
 
-    this.createOne = function createOne(data) {
+    this.createOne = function createOne(data,next) {
         sampleHttpApiCall('POST', data, next);
     }
 
-    this.deleteOne = function deleteOne(id) {
+    this.deleteOne = function deleteOne(id,next) {
         sampleHttpApiCall('DELETE', { id: id }, next);
     }
 
-    this.updateOne = function updateOne(data) {
+    this.updateOne = function updateOne(data,next) {
         sampleHttpApiCall('PUT', data, next);
     }
 
@@ -98,6 +98,8 @@ coolApp.controller('app', function ($scope, api) {
     s.loggedIn = (window.localStorage.loggedIn == 1);
     if (!s.loggedIn) {
         window.location = "#/login"
+    } else {
+        s.username = (window.localStorage.username );
     }
 });
 
@@ -115,12 +117,28 @@ coolApp.controller('loginCtrl', function ($scope, api) {
         }
     }
 });
+
+coolApp.controller('createCtrl', function ($scope, api) {
+    $scope.data = {};
+    $scope.create = function(){
+        api.createOne($scope.data,function(){
+            console.log('created one');
+        })
+    }
+});
+
 coolApp.controller('allCtrl', function ($scope, api) {
-    $scope.sample = "data";
+    $scope.list =[];
+    api.allTasks(function(response){
+        console.log('allre ',response);
+        $scope.list = response.tasks.map(i=>{
+            i.date = new Date(i.due).toDateString();
+            return i;
+        });
+        
+    })
+
 });
 coolApp.controller('editCtrl', function ($scope, api) {
-    $scope.sample = "data";
-});
-coolApp.controller('createCtrl', function ($scope, api) {
     $scope.sample = "data";
 });

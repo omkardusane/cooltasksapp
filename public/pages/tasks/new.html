@@ -1,1 +1,24 @@
-new create
+<div layout="column" layout-padding ng-cloak>
+    <br/>
+    <md-content class="md-no-momentum">
+
+        <md-input-container class="md-icon-float md-block">
+            <!-- Use floating label instead of placeholder -->
+            <label>What is to be done?</label>
+            <input ng-model="data.what" type="text">
+        </md-input-container>
+
+        <div layout="row">
+            <div flex-gt-xs>
+                <h4>When is it due?</h4>
+                <md-datepicker ng-model="data.due" md-placeholder="Enter Due Date"></md-datepicker>
+            </div>
+        </div>
+        <md-input-container ng-if="(data.what && data.what.length>0) && (data.due )">
+            <md-button class="md-primary md-raised" ng-click="create()"> Create </md-button>
+        </md-input-container>
+
+
+    </md-content>
+
+</div>
