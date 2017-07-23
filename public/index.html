@@ -31,21 +31,40 @@
         </md-toolbar>
         <md-content class="md-padding">
 
-            <md-nav-bar ng-if="loggedIn" md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links">
+            <md-nav-bar ng-if="loggedIn" md-selected-nav-item="currentNavItem">
 
-                <md-nav-item md-nav-click="loc('#/')" name="all">
+                <md-nav-item md-nav-href="#/all" name='all'>
                     All Tasks
                 </md-nav-item>
 
-                <md-nav-item md-nav-click="loc('#/new')" name="new">
+                <md-nav-item md-nav-href="#/new" name="new">
                     Create New Task
                 </md-nav-item>
 
-                <md-nav-item md-nav-click="logout()" name="new">
+                <md-nav-item md-nav-click="logout()" name="logout">
                     Log Out
                 </md-nav-item>
-
+                
             </md-nav-bar>
+
+            <!-- </md-nav-bar>
+
+                <md-tabs md-selected="selectedIndex" ng-if="loggedIn" md-selected-nav-item="currentNavItem">
+
+                <md-tab md-nav-href="#/all" name='all'>
+                    All Tasks
+                </md-tab>
+
+                <md-tab md-nav-href="#/new" name="new">
+                    Create New Task
+                </md-tab>
+
+                <md-tab md-nav-click="logout()" name="logout">
+                    Log Out
+                </md-tab>
+
+            </md-tabs> -->
+
 
             <div class="ext-content">
                 <div ng-view></div>

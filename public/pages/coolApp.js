@@ -13,11 +13,15 @@ coolApp.config(function ($routeProvider) {
             templateUrl: 'pages/tasks/new.html',
             controller: 'createCtrl'
         })
-        .when("/edit", {
-            templateUrl: 'pages/tasks/edit.html',
-            controller: 'editCtrl'
-        })
-        .when("/", {
+        // .when("/edit", {
+        //     templateUrl: 'pages/tasks/edit.html',
+        //     controller: 'editCtrl'
+        // })
+        // .when("/", {
+        //     templateUrl: 'pages/tasks/all.html',
+        //     controller: 'allCtrl'
+        // })
+        .when("/all", {
             templateUrl: 'pages/tasks/all.html',
             controller: 'allCtrl'
         })
@@ -25,10 +29,11 @@ coolApp.config(function ($routeProvider) {
             templateUrl: 'pages/tasks/login.html',
             controller: 'loginCtrl'
         })
-        .otherwise({
-            templateUrl: 'pages/tasks/all.html',
-            controller: 'allCtrl'
-        });
+        // .otherwise({
+        //     templateUrl: 'pages/tasks/all.html',
+        //     controller: 'allCtrl'
+        // })
+        ;
 });
 
 coolApp.service('api', function ($http) {
@@ -54,7 +59,7 @@ coolApp.service('api', function ($http) {
             if (response.ok) {
                 next(response);
             } else {
-                console.error("error with http api: " ,repsonse)
+                console.error("error with http api: ", repsonse)
             }
         });
     };
@@ -69,37 +74,55 @@ coolApp.service('api', function ($http) {
         sampleHttpApiCall('GET', {}, next);
     }
 
-    this.createOne = function createOne(data,next) {
+    this.createOne = function createOne(data, next) {
         sampleHttpApiCall('POST', data, next);
     }
 
-    this.deleteOne = function deleteOne(id,next) {
+    this.deleteOne = function deleteOne(id, next) {
         sampleHttpApiCall('DELETE', { id: id }, next);
     }
 
-    this.updateOne = function updateOne(data,next) {
+    this.updateOne = function updateOne(data, next) {
         sampleHttpApiCall('PUT', data, next);
     }
 
 });
 
-coolApp.controller('app', function ($scope, api) {
-    $scope.currentNavItem = 'all';
+coolApp.controller('app', function ($scope, api, $location) {
+    console.log('app init')
     let s = $scope;
-    s.loc = function (hash) {
-        window.location = hash;
+    $scope.selectedIndex = 1;
+    $scope.currentNavItem = 'new';
+    /* $scope.$watch('selectedIndex', function (current, old) {
+        previous = selected;
+        selected = tabs[current];
+        if (old + 1 && (old != current)) $log.debug('Goodbye ' + previous.title + '!');
+        if (current + 1) $log.debug('Hello ' + selected.title + '!');
+    }); */
+    $scope.$watch('currentNavItem', function (current, old) {
+        console.log('current hash changed')
+        //$location.hash($scope.currentNavItem);
+    });
+    s.loc = function (name) {
+        $scope.currentNavItem = name;
+        window.location = '#/' + name;
+        //$scope.$digest();
     }
     s.logout = function () {
         window.localStorage.loggedIn = 0;
         delete window.localStorage.username;
         s.loggedIn = false;
         window.location = "#/login"
+        //s.loc('login')
     }
     s.loggedIn = (window.localStorage.loggedIn == 1);
     if (!s.loggedIn) {
+        //s.loc('login')
         window.location = "#/login"
     } else {
-        s.username = (window.localStorage.username );
+        s.username = (window.localStorage.username);
+        console.log('setting you a trap')
+        s.loc('new');
     }
 });
 
@@ -108,9 +131,7 @@ coolApp.controller('loginCtrl', function ($scope, api) {
     s.login = function () {
         if (s.username && s.username.length > 0) {
             api.login(s.username, function () {
-                window.location = "#/new"
-                s.$parent.currentNavItem = 'new';
-
+                $scope.$parent.loc('new');
                 s.$parent.loggedIn = true;
                 s.$parent.username = s.username;
             })
@@ -118,27 +139,87 @@ coolApp.controller('loginCtrl', function ($scope, api) {
     }
 });
 
-coolApp.controller('createCtrl', function ($scope, api) {
+coolApp.controller('createCtrl', function ($scope, api, $mdToast) {
     $scope.data = {};
-    $scope.create = function(){
-        api.createOne($scope.data,function(){
+    $scope.create = function () {
+        api.createOne($scope.data, function () {
             console.log('created one');
+            $scope.data = {};
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent('Created!')
+                    .hideDelay(1000)
+            );
         })
     }
 });
 
-coolApp.controller('allCtrl', function ($scope, api) {
-    $scope.list =[];
-    api.allTasks(function(response){
-        console.log('allre ',response);
-        $scope.list = response.tasks.map(i=>{
+coolApp.controller('allCtrl', function ($scope, api, $mdDialog, $mdToast) {
+    $scope.list = [];
+    api.allTasks(function (response) {
+        console.log('allre ', response);
+        $scope.list = response.tasks.map(i => {
             i.date = new Date(i.due).toDateString();
             return i;
         });
-        
     })
 
+    $scope.edit = function (ev, task) {
+        console.log(task);
+        $mdDialog.show({
+            controller: function ($scope, api) {
+                let edataObje = JSON.parse(JSON.stringify(task));
+                edataObje.due = new Date(task.due);
+                $scope.edata = edataObje;
+                $scope.save = function () {
+                    api.updateOne({
+                        due: $scope.edata.due,
+                        what: $scope.edata.what,
+                        id: $scope.edata._id,
+                    }, function () {
+                        console.log('updated one');
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent('Updated!')
+                                .hideDelay(1000)
+                        );
+                        $mdDialog.hide($scope.edata);
+                    })
+                }
+            },
+            templateUrl: 'pages/tasks/edit.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: false // Only for -xs, -sm breakpoints.
+        })
+            .then(function (d) {
+                // after close
+                task.date = new Date(d.due).toDateString();
+                task.what = d.what;
+                window.location = '#/all';
+
+            }, function () {
+
+            });
+    };
+
+    $scope.delete = function (task) {
+        console.log('TOdelete ', task)
+        const idToDel = task._id;
+        api.deleteOne(task._id, function () {
+            console.log('deleted one');
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent('Deleted!')
+                    .hideDelay(1000)
+            );
+             $scope.list =  $scope.list.filter(i=>{
+                 return idToDel != i._id;
+             })
+        });
+    }
+
 });
-coolApp.controller('editCtrl', function ($scope, api) {
-    $scope.sample = "data";
-});
+
+//coolApp.controller('editCtrl', );

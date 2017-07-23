@@ -1,0 +1,117 @@
+{
+	"variables": [],
+	"info": {
+		"name": "play",
+		"_postman_id": "d2e61fa0-a9cc-61d3-716a-ec14fd87f950",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "sample todo app",
+			"description": "",
+			"item": [
+				{
+					"name": "Remove",
+					"request": {
+						"url": "{{local3300}}/api/tasks/",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "username",
+								"value": "omkar",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\":\"5974b4b0a27bba51ac77cb33\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"request": {
+						"url": "{{local3300}}/api/tasks/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "username",
+								"value": "omkar2",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\":\"123\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"url": "{{local3300}}/api/tasks/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "username",
+								"value": "omkar",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"what\":\"eat kiwi\",\n\t\"due\":\"18/07/2018\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"url": "{{local3300}}/api/tasks/",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "username",
+								"value": "omkar",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\":\"5974aa13961c311f9c0e7605\",\n\t\"what\":\"Bhau,kolhapur la jaycha ahe nakki\",\n\t\"due\":\"17/07/2018\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
