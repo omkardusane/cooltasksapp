@@ -13,7 +13,7 @@ module.exports = {
             return obj;
         }
         else {
-            return { missing: missing };
+            return { missing: missing, obj: obj };
         }
     }
 }

@@ -10,7 +10,7 @@ module.exports = async (req, res, next)=>{
             next();
         };
     } else {
-        res.status(400);
+        res.status(401);
         res.json({ ok: false, msg: 'no username present in header' })
     }
 }

@@ -1,20 +1,59 @@
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
-</head>
-<body >
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+<!DOCTYPE html>
+<html lang="en" ng-app="cool">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-  
-  <script type="text/javascript">    
-    angular.module('app', ['ngMaterial']);
-  </script>
-        
-  <div ng-app="BlankApp" ng-cloak > </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Cool apps</title>
+    <link rel="stylesheet" href="css/angular-material.min.css">
+</head>
+
+<body>
+    <!--Dependencies-->
+    <script src="js/angular.js"></script>
+    <!-- angular 1.4.0-->
+    <script src="js/angular-route.js"></script>
+    <!-- angular 1.4.0-->
+    <script src="js/angular-animate.min.js"></script>
+    <script src="js/angular-aria.min.js"></script>
+    <script src="js/angular-messages.min.js"></script>
+    <script src="js/angular-material.min.js"></script>
+
+    <!--Custom Scripts and angular modules-->
+    <script src="pages/coolApp.js"></script>
+    <!-- putnavbar here-->
+
+    <div ng-controller="app">
+        <md-toolbar class="md-primary">
+            <div class="md-toolbar-tools">
+                <h2 class="md-flex" ng-if="!loggedIn"> Welcome </h2>
+                <h2 class="md-flex" ng-if="loggedIn"> Hello, {{username}} ! You'll love the Cool Tasks App </h2>
+            </div>
+        </md-toolbar>
+        <md-content class="md-padding">
+
+            <md-nav-bar ng-if="loggedIn" md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links">
+
+                <md-nav-item md-nav-click="loc('#/')" name="all">
+                    All Tasks
+                </md-nav-item>
+
+                <md-nav-item md-nav-click="loc('#/new')" name="new">
+                    Create New Task
+                </md-nav-item>
+
+                <md-nav-item md-nav-click="logout()" name="new">
+                    Log Out
+                </md-nav-item>
+
+            </md-nav-bar>
+
+            <div class="ext-content">
+                <div ng-view></div>
+            </div>
+
+        </md-content>
+    </div>
 
 </body>
+
 </html>

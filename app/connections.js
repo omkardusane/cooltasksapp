@@ -1,5 +1,6 @@
 let mongodb = require('mongodb');
-let MongoClient = require('mongodb').MongoClient;
+let MongoClient = mongodb.MongoClient;
+ObjectId = mongodb.ObjectID;
 let env = require('../config/env');
 module.exports = {
     mongo5: async () => {
