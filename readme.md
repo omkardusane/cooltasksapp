@@ -5,16 +5,16 @@
     - User can delete a task.
     - User can see all tasks anytime by logging in.
 
-#To run this code, you need: 
+To run this code, you need: 
 
 1. Mongodb 
-    installed from (https://www.mongodb.com/) 
-    Mongodb Server running in background ( mongod.exe/mongod ).
+    - installed from (https://www.mongodb.com/) 
+    - Mongodb Server running in background ( mongod.exe/mongod ).
 
-2. Nodejs
-    Latest Nodejs Greater than 8.0 (async await is used in this code)
+2. Nodejs > 8
+    - Latest Nodejs Greater than 8.0 (async await is used in this code)
 
-3. after you got this, get this code in your machine and ----------
+3. After that, clone this code in your machine and 
     ```npm install```
 
 4. After all dependencies are installed, run the code by
