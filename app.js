@@ -1,10 +1,8 @@
 const _runtime = {};
 express = require('express');
 helpers = require('./app/helpers');
-const sockerIO = require('socket.io');
 const env = require('./config/env');
 const connectors = require('./app/connections');
-
 let load = async ()=>{
     _runtime.db =  (await (connectors.mongo5()));
     _runtime.app.use(require('body-parser').json());
@@ -12,17 +10,11 @@ let load = async ()=>{
     _runtime.app.use('/api/tasks', require('./app/tasks'));
     _runtime.app.use('/', express.static(__dirname+'/public'));
 };
-
 let onload = ()=>{ Object.assign(global,_runtime)}
-
 let glow = async (port, next) => {
     port = port || 1337;
     _runtime.app = new express();
     _runtime.httpServer = require('http').Server(_runtime.app);
-    _runtime.sio = sockerIO(_runtime.httpServer, {
-        path: 'sio',
-        serveClient: true,
-    });
     await load();
     _runtime.httpServer.listen(port, function () {
         console.log(
@@ -32,7 +24,5 @@ let glow = async (port, next) => {
         if (next) next();
     });
 };
-
-
 glow(3300);
 
