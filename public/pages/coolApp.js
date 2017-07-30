@@ -1,7 +1,3 @@
-/**
- * Created by Omkar Dusane on 27-Oct-16.
- */
-
 var coolApp = angular.module('cool', [
     'ngMaterial',
     'ngRoute'
@@ -39,10 +35,11 @@ coolApp.config(function ($routeProvider) {
 coolApp.service('api', function ($http) {
     // sample http api POST request
     let sampleHttpApiCall = function (method, jsonData, next) {
+        var base = 'http://localhost:3300'
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": "/api/tasks",
+            "url": base+"/api/tasks",
             method: method,
             "headers": {
                 "content-type": "application/json",

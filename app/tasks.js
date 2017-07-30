@@ -7,9 +7,7 @@ router.get('/', async (req, res) => {
     console.log('yolo ', req.username);
     let list = await db.tasks.find({
         owner: req.username,
-    }, {
-            owner: 0
-        })
+    }, { owner: 0 })
         .sort({ createdOn: -1 })
         .toArray();
     res.json({ ok: true, tasks: list });
@@ -76,6 +74,40 @@ router.put('/', async (req, res) => {
                 res.json({ ok: false, msg: 'Meybe this user doesnt own this task. Spoofing here.' });
             } else {
                 res.json({ ok: false, msg: 'could not update for some databse reason.' });
+            }
+        } catch (e) {
+            res.json({ ok: false, msg: 'not updated, the Id provided is not approproate' })
+        }
+    }
+});
+
+// complete one
+router.put('/complete', async (req, res) => {
+    if (!req.body.id) {
+        res.status(400);
+        return res.json({ ok: false, msg: 'send an id with request' })
+    } else {
+        const id = new ObjectId(req.body.id);
+        let data = {};
+        if (req.body['pending']) {
+            data.pending = (req.body.pending === '1')
+        }
+        data.updatedOn = new Date().getTime();
+        try {
+            let cr = await db.tasks.update({
+                _id: id,
+                owner: req.username
+            }, {
+                    '$set': data
+                }
+            );
+            console.log('Yo update ', cr.result);
+            if (cr.result.n == 1) {
+                res.json({ ok: true, modified: (cr.result.nModified == 1) });
+            } else if (cr.result.n == 1) {
+                res.json({ ok: false, msg: 'Meybe this user doesnt own this task. Spoofing here.' });
+            } else {
+                res.json({ ok: false, msg: 'could not update for some databse issue.' });
             }
         } catch (e) {
             res.json({ ok: false, msg: 'not updated, the Id provided is not approproate' })
