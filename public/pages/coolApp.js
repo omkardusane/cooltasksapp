@@ -34,12 +34,12 @@ coolApp.config(function ($routeProvider) {
 
 coolApp.service('api', function ($http) {
     // sample http api POST request
-    let sampleHttpApiCall = function (method, jsonData, next) {
-        var base = 'http://localhost:3300'
+    var base = 'http://localhost:3300'
+    let httpCall = function (method, jsonData, next, path) {
         var settings = {
             "async": true,
             "crossDomain": true,
-            "url": base+"/api/tasks",
+            "url": path || base + "/api/tasks",
             method: method,
             "headers": {
                 "content-type": "application/json",
@@ -64,25 +64,29 @@ coolApp.service('api', function ($http) {
     this.login = function login(username, next) {
         window.localStorage.username = username;
         window.localStorage.loggedIn = 1;
-        sampleHttpApiCall('GET', {}, next);
+        httpCall('GET', {}, next);
     }
 
     this.allTasks = function allTasks(next) {
-        sampleHttpApiCall('GET', {}, next);
+        httpCall('GET', {}, next);
     }
 
     this.createOne = function createOne(data, next) {
-        sampleHttpApiCall('POST', data, next);
+        httpCall('POST', data, next);
     }
 
     this.deleteOne = function deleteOne(id, next) {
-        sampleHttpApiCall('DELETE', { id: id }, next);
+        httpCall('DELETE', { id: id }, next);
     }
 
     this.updateOne = function updateOne(data, next) {
-        sampleHttpApiCall('PUT', data, next);
+        httpCall('PUT', data, next);
     }
 
+    this.completeOne = function updateOne(data, next) {
+        console.log("TEST ", data);
+        httpCall('PUT', data, next, base + '/api/tasks/complete');
+    }
 });
 
 coolApp.controller('app', function ($scope, api, $location) {
@@ -157,6 +161,7 @@ coolApp.controller('allCtrl', function ($scope, api, $mdDialog, $mdToast) {
         console.log('allre ', response);
         $scope.list = response.tasks.map(i => {
             i.date = new Date(i.due).toDateString();
+            i.lastUpdated = new Date(i.updatedOn).toDateString();
             return i;
         });
     })
@@ -211,9 +216,23 @@ coolApp.controller('allCtrl', function ($scope, api, $mdDialog, $mdToast) {
                     .textContent('Deleted!')
                     .hideDelay(1000)
             );
-             $scope.list =  $scope.list.filter(i=>{
-                 return idToDel != i._id;
-             })
+            $scope.list = $scope.list.filter(i => {
+                return idToDel != i._id;
+            })
+        });
+    }
+
+    $scope.complete = function (task) {
+        const idToDel = task._id;
+        api.completeOne({ id: task._id }, function () {
+            console.log('completed one');
+            task.lastUpdated = new Date().toDateString();
+            task.pending = false;
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent('Done!')
+                    .hideDelay(600)
+            );
         });
     }
 

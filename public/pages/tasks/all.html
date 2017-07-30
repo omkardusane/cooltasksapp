@@ -2,7 +2,10 @@
 <md-list-item ng-repeat="task in list" class="noright">
     <p>{{ task.what }}</p>
     <md-button class="md-primary"> {{ task.date }} </md-button>
-    <md-button class="md-primary md-raised" ng-click="edit($event,task)"> Edit </md-button>
-    <md-button class="md-warn md-raised" ng-click="delete(task)"> Delete</md-button>
+    <md-button class="md-primary md-disabled" ng-show="!task.pending" > Completed on {{task.lastUpdated}}</md-button>
+    <md-button class="md-primary md-raised" ng-show="task.pending" ng-click="edit($event,task)"> Edit </md-button>
+    <md-button class="md-accent md-raised" ng-show="task.pending" ng-click="complete(task)"> Complete</md-button>
+    <md-button class="md-warn md-raised"  ng-click="delete(task)"> Delete</md-button>
+
 </md-list-item>
 </md-list>

@@ -89,16 +89,16 @@ router.put('/complete', async (req, res) => {
     } else {
         const id = new ObjectId(req.body.id);
         let data = {};
-        if (req.body['pending']) {
-            data.pending = (req.body.pending === '1')
-        }
         data.updatedOn = new Date().getTime();
         try {
             let cr = await db.tasks.update({
                 _id: id,
                 owner: req.username
             }, {
-                    '$set': data
+                    '$set': {
+                        pending: false,
+                        updatedOn: new Date().getTime()
+                    }
                 }
             );
             console.log('Yo update ', cr.result);
